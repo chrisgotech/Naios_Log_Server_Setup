@@ -1,0 +1,27 @@
+#!/bin/bash
+ssh SA@10.11.12.81 << 'EOF'
+ # Disable SELinux
+ sudo sed -i '7s/enforcing/disabled/' /etc/selinux/config
+ # Create opensearch directory
+ mkdir /usr/local/nagioslogserver/opensearch
+ # Install Python 3.9
+ sudo yum install -y python39-3.9.20-1.module+el8.10.0+22342+478c159e.x86_64
+ # Import GPG keys
+ sudo rpm --import https://dl.google.com/linux/linux_signing_key.pub
+ sudo rpm --import https://repo.nagios.com/GPG-KEY-NAGIOS-V3
+ # Add Nagios repo
+ sudo rpm -Uvh https://repo.nagios.com/nagios/8/nagios-repo-8-2.el8.noarch.rpm
+ # Update system and install NCPA
+ sudo yum update -y
+ sudo yum install -y ncpa
+ sudo yum update -y ncpa
+ # Download and install Nagios Log Server
+ cd /opt
+ sudo wget https://assets.nagios.com/downloads/nagios-log-server/r2/nagioslogserver-latest.tar.gz
+ sudo tar xzf nagioslogserver-latest.tar.gz
+ cd nagioslogserver
+ sudo ./fullinstall
+ # Reload firewall and reboot
+ sudo firewall-cmd --reload
+ sudo reboot
+EOF
