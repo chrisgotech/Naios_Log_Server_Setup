@@ -1,0 +1,9 @@
+nagios client script
+#!/bin/bash
+ssh SA@10.11.12.46 << 'EOF'
+ echo "Running Nagios Log Server auto-setup script..."
+ # Download setup script from NLS server
+ curl -sS -O http://10.11.12.227/nagioslogserver/scripts/setup-linux.sh
+ # Run the script to configure log forwarding
+ sudo bash setup-linux.sh -s 10.11.12.227 -p 5544
+EOF
